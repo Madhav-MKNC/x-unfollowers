@@ -1,0 +1,33 @@
+body {
+    background-color: black;
+    color: magenta;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+#bustButton {
+    background-color: magenta;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#bustButton:hover {
+    background-color: pink;
+    /* Lighter green */
+}
+
+#responseContainer {
+    margin-top: 20px;
+    border: 2px solid magenta;
+    padding: 10px;
+    color: lightgreen;
+    min-height: 50px;
+    max-height: 300px; /* Set a maximum height */
+    overflow-y: auto; /* Adds scroll bar if content overflows */
+    word-wrap: break-word; /* Ensures long words do not overflow */
+}
