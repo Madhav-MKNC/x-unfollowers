@@ -61,8 +61,9 @@ async function postFollowersAndGetResponse(followers) {
             throw new Error(`Network response was not ok: ${response.status}`);
         }
 
-        const data = response;  // Assuming the response is JSON
-        return data;
+        const data = await response.json(); // Correctly parsing the JSON response
+        console.log(data); 
+        return data.output;
     } catch (error) {
         console.error('Fetch error:', error);  // Log the error for debugging
         return 'Run python app.py';
