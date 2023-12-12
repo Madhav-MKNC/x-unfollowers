@@ -1,7 +1,8 @@
 import requests
 
+url = ""
 r = requests.post(
-    url="https://x-unfollowers.gamhcrew.repl.co/",
+    url=url,
     json={  # Use the json parameter instead of data
         'followers': [
             'mknc',
