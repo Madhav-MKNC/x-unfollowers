@@ -1,4 +1,5 @@
 body {
+    font-size: 16px;
     background-color: black;
     color: magenta;
     font-family: Arial, sans-serif;
@@ -11,7 +12,7 @@ body {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     transition: background-color 0.3s ease;
     border: 5px solid magenta;
 }
@@ -25,9 +26,12 @@ body {
     margin-top: 20px;
     border: 2px solid magenta;
     padding: 10px;
-    color: greenyellow;
+    color: rgb(41, 255, 59);
     min-height: 50px;
     max-height: 300px;
     overflow-y: auto;
-    word-wrap: break-word; 
+    word-wrap: break-word;
+    white-space: nowrap;       /* Prevents the text from wrapping */
+    overflow-x: hidden;        /* Hides horizontal overflow */
+    text-overflow: ellipsis;   /* Adds an ellipsis if the text overflows */
 }

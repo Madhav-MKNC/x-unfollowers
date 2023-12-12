@@ -23,10 +23,10 @@ def get_output(current: list) -> str:
         print("** Error reading previous.json")
         print("**", str(e))
         previous = []
-            
+
     unfollowers = [ye for ye in previous if ye not in current]
     new_followers = [ye for ye in current if ye not in previous]
-    
+
     # prepare the output
     output = f"# Total Followers: {len(current)}\n"
     if unfollowers:
@@ -40,9 +40,9 @@ def get_output(current: list) -> str:
         # output += "------------------\n"
         for i in new_followers:
             output + f"* https://twitter.com/{i}\n"
-    else:
-        output += "-----------------------------------"
-        output += "Nobody unfollowed.\n"
+    if not (unfollowers or new_followers):
+        # output += "-----------------------------------"
+        output += "\nNobody unfollowed.\n"
 
     # save previous
     try:
