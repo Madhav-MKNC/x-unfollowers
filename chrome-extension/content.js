@@ -62,7 +62,7 @@ async function postFollowersAndGetResponse(followers) {
         }
 
         const data = await response.json(); // Correctly parsing the JSON response
-        console.log(data); 
+        console.log(data);
         return data.output;
     } catch (error) {
         console.error('Fetch error:', error);  // Log the error for debugging
@@ -86,6 +86,11 @@ async function main() {
 
     // Instead of console.log, use Chrome's messaging system to send the response back to the popup
     chrome.runtime.sendMessage({ response: response });
+
+    // Store the response in Chrome's storage with the key "x-unfollowers"
+    chrome.storage.local.set({ 'x-unfollowers': response }, function () {
+        console.log('Response is stored in Chrome storage with key "x-unfollowers"');
+    });
 }
 
 // Listener for messages from the popup
