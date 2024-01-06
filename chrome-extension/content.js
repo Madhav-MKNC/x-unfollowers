@@ -47,7 +47,7 @@ async function loadAndExtractFollowers() {
 
 async function postFollowersAndGetResponse(followers) {
     try {
-        const response = await fetch('https://x-unfollowers.gamhcrew.repl.co/', {
+        const response = await fetch('https://84875d7b-d2b6-4b3b-a6af-5a935bf05be3-00-1blhw8cu8w6qm.pike.replit.dev/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
