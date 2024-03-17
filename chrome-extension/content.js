@@ -56,24 +56,24 @@ async function analyzeAndStoreFollowers(followerHandles) {
         const newFollowers = followerHandles.filter(follower => !previousFollowers.includes(follower));
         const unfollowers = previousFollowers.filter(follower => !followerHandles.includes(follower));
 
-        let output = `# Total Followers: ${followerHandles.length}\n`;
+        let output = `# Total Followers: ${followerHandles.length}<br>`;
 
         if (unfollowers.length > 0) {
-            output += `\n# ${unfollowers.length} unfollowers\n\n`;
+            output += `<br># ${unfollowers.length} unfollowers<br><br>`;
             unfollowers.forEach(unfollower => {
-                output += `* https://twitter.com/${unfollower}\n`;
+                output += `<a href="https://twitter.com/${unfollower}" target="_blank">https://twitter.com/${unfollower}</a><br>`;
             });
         }
 
         if (newFollowers.length > 0) {
-            output += `\n# ${newFollowers.length} new followers\n\n`;
+            output += `<br># ${newFollowers.length} new followers<br><br>`;
             newFollowers.forEach(follower => {
-                output += `* https://twitter.com/${follower}\n`;
+                output += `<a href="https://twitter.com/${follower}" target="_blank">https://twitter.com/${follower}</a><br>`;
             });
         }
 
         if (unfollowers.length === 0 && newFollowers.length === 0) {
-            output += "\nNo changes in followers.\n";
+            output += "<br>No changes in followers.<br>";
         }
 
         chrome.runtime.sendMessage({ response: output });
@@ -82,6 +82,7 @@ async function analyzeAndStoreFollowers(followerHandles) {
         });
     });
 }
+
 
 async function main() {
     if (window.location.href !== "https://twitter.com/5mknc5/followers") {
