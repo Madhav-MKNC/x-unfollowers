@@ -7,67 +7,80 @@ async function navigateAndWait(url, waitTime) {
     await sleep(waitTime);
 }
 
-
-async function extractFollowersHandles(followerHandles) {
-    let followerElements = document.querySelectorAll('div[data-testid="UserCell"]'); // Example selector, replace with actual
+async function extractFollowersHandles(followerHandlesSet) {
+    let followerElements = document.querySelectorAll('div[data-testid="UserCell"]'); // Example selector, adjust as needed
 
     followerElements.forEach(element => {
-        let handleElement = element.querySelector('a[href^="/"]'); // This selector targets an 'a' tag with a 'href' attribute starting with '/'
+        let handleElement = element.querySelector('a[href^="/"]');
         if (handleElement) {
-            let followerHandle = handleElement.getAttribute('href').slice(1); // Remove the leading '/' to get the handle
-            if (!followerHandles.includes(followerHandle)) {
-                followerHandles.push(followerHandle);
-            }
+            let followerHandle = handleElement.getAttribute('href').slice(1); // Remove the leading '/'
+            followerHandlesSet.add(followerHandle);
         }
     });
 }
 
 async function loadAndExtractFollowers() {
-    let lastHeight = document.body.scrollHeight;
-    let followerHandles = [];
+    let followerHandles = new Set(); // Using a Set to automatically handle unique values
+    let previousSize = 0;
     let attempts = 0;
+    const maxAttempts = 3; // Max attempts to try fetching new followers after no new ones are detected
 
-    while (attempts < 3) {
-        window.scrollBy(0, 500);
-        await sleep(1000); // less sleep less accuracy
-
-        let newHeight = document.body.scrollHeight;
-        if (newHeight === lastHeight) {
-            attempts++;
-        } else {
-            attempts = 0;
-        }
+    while (true) {
+        window.scrollBy(0, window.innerHeight);
+        await sleep(800); // Adjust the sleep time as needed for page load performance
 
         await extractFollowersHandles(followerHandles);
-        lastHeight = newHeight;
-    }
 
-    return followerHandles;
-}
-
-async function postFollowersAndGetResponse(followers) {
-    try {
-        const response = await fetch('https://84875d7b-d2b6-4b3b-a6af-5a935bf05be3-00-1blhw8cu8w6qm.pike.replit.dev/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                followers: followers
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.status}`);
+        if (followerHandles.size === previousSize) {
+            attempts++;
+            if (attempts >= maxAttempts) {
+                // Stop if no new followers are added after several attempts
+                break;
+            }
+        } else {
+            attempts = 0; // Reset attempts if new followers are found
         }
 
-        const data = await response.json(); // Correctly parsing the JSON response
-        console.log(data);
-        return data.output;
-    } catch (error) {
-        console.error('Fetch error:', error);  // Log the error for debugging
-        return 'Run python app.py';
+        previousSize = followerHandles.size;
     }
+
+    return Array.from(followerHandles); // Convert the Set to an Array to return
+}
+
+
+
+async function analyzeAndStoreFollowers(followerHandles) {
+    // This function now does the job of analyzing followers and storing the result
+    chrome.storage.local.get(['previousFollowers'], function (result) {
+        const previousFollowers = result.previousFollowers || [];
+        const newFollowers = followerHandles.filter(follower => !previousFollowers.includes(follower));
+        const unfollowers = previousFollowers.filter(follower => !followerHandles.includes(follower));
+
+        let output = `# Total Followers: ${followerHandles.length}\n`;
+
+        if (unfollowers.length > 0) {
+            output += `\n# ${unfollowers.length} unfollowers\n\n`;
+            unfollowers.forEach(unfollower => {
+                output += `* https://twitter.com/${unfollower}\n`;
+            });
+        }
+
+        if (newFollowers.length > 0) {
+            output += `\n# ${newFollowers.length} new followers\n\n`;
+            newFollowers.forEach(follower => {
+                output += `* https://twitter.com/${follower}\n`;
+            });
+        }
+
+        if (unfollowers.length === 0 && newFollowers.length === 0) {
+            output += "\nNo changes in followers.\n";
+        }
+
+        chrome.runtime.sendMessage({ response: output });
+        chrome.storage.local.set({ 'x-unfollowers': output, 'previousFollowers': followerHandles }, function () {
+            console.log('Followers analysis stored.');
+        });
+    });
 }
 
 async function main() {
@@ -77,23 +90,23 @@ async function main() {
         return;
     }
 
-    // // refresh the page
+    // remove aside "who to follow"
+    // Use querySelector to find the element with the specific aria-label
+    var element = document.querySelector('aside[aria-label="Who to follow"]');
+
+    // If the element exists, remove it from the DOM
+    if (element) {
+        element.parentNode.removeChild(element);
+    }
+
+
     window.scrollTo(0, 0);
-    await sleep(1000); // less sleep less accuracy
+    await sleep(1000);
 
     let allFollowers = await loadAndExtractFollowers();
-    let response = await postFollowersAndGetResponse(allFollowers);
-
-    // Instead of console.log, use Chrome's messaging system to send the response back to the popup
-    chrome.runtime.sendMessage({ response: response });
-
-    // Store the response in Chrome's storage with the key "x-unfollowers"
-    chrome.storage.local.set({ 'x-unfollowers': response }, function () {
-        console.log('Response is stored in Chrome storage with key "x-unfollowers"');
-    });
+    await analyzeAndStoreFollowers(allFollowers);
 }
 
-// Listener for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === "bustEm") {
         main();
