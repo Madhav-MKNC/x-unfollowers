@@ -27,12 +27,16 @@ async function loadAndExtractFollowers() {
 
     while (true) {
         window.scrollBy(0, window.innerHeight);
-        await sleep(800); // Adjust the sleep time as needed for page load performance
+        await sleep(100); // Adjust the sleep time as needed for page load performance
 
         await extractFollowersHandles(followerHandles);
 
         if (followerHandles.size === previousSize) {
             attempts++;
+
+            // wait for loading 
+            await sleep(2000)
+
             if (attempts >= maxAttempts) {
                 // Stop if no new followers are added after several attempts
                 break;
