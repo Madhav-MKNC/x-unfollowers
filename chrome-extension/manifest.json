@@ -10,7 +10,8 @@
         "storage"
     ],
     "host_permissions": [
-        "https://twitter.com/*"
+        "https://twitter.com/*",
+        "https://x.com/*"
     ],
     "icons": {
         "128": "icon.png"
@@ -27,7 +28,8 @@
     "content_scripts": [
         {
             "matches": [
-                "https://twitter.com/*"
+                "https://twitter.com/*",
+                "https://x.com/*"
             ],
             "js": [
                 "content.js"

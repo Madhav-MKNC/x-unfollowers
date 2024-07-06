@@ -65,14 +65,14 @@ async function analyzeAndStoreFollowers(followerHandles) {
         if (unfollowers.length > 0) {
             output += `<br># ${unfollowers.length} unfollowers<br><br>`;
             unfollowers.forEach(unfollower => {
-                output += `<a href="https://twitter.com/${unfollower}" target="_blank">https://twitter.com/${unfollower}</a><br>`;
+                output += `<a href="https://x.com/${unfollower}" target="_blank">https://x.com/${unfollower}</a><br>`;
             });
         }
 
         if (newFollowers.length > 0) {
             output += `<br># ${newFollowers.length} new followers<br><br>`;
             newFollowers.forEach(follower => {
-                output += `<a href="https://twitter.com/${follower}" target="_blank">https://twitter.com/${follower}</a><br>`;
+                output += `<a href="https://x.com/${follower}" target="_blank">https://x.com/${follower}</a><br>`;
             });
         }
 
@@ -89,8 +89,8 @@ async function analyzeAndStoreFollowers(followerHandles) {
 
 
 async function main() {
-    if (window.location.href !== "https://twitter.com/5mknc5/followers") {
-        alert("Goto https://twitter.com/5mknc5/followers");
+    if (window.location.href !== "https://x.com/5mknc5/followers") {
+        alert("Goto https://x.com/5mknc5/followers");
         console.log("Not on the specified URL, script will not run.");
         return;
     }
