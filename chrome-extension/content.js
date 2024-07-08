@@ -8,13 +8,21 @@ async function navigateAndWait(url, waitTime) {
 }
 
 async function extractFollowersHandles(followerHandlesSet) {
-    let followerElements = document.querySelectorAll('div[data-testid="UserCell"]'); // Example selector, adjust as needed
+    // Query for all elements that could potentially contain follower information
+    let userCells = document.querySelectorAll('[data-testid="UserCell"]');
 
-    followerElements.forEach(element => {
-        let handleElement = element.querySelector('a[href^="/"]');
-        if (handleElement) {
-            let followerHandle = handleElement.getAttribute('href').slice(1); // Remove the leading '/'
-            followerHandlesSet.add(followerHandle);
+    userCells.forEach(cell => {
+        // Check if the cell contains the "Follows you" text which indicates a follower
+        if (cell.textContent.includes("Follows you")) {
+            // Then find the first <a> tag within the first div of this cell which has the handle
+            let link = cell.querySelector('div:first-child a[href^="/"]');
+            if (link) {
+                let href = link.getAttribute('href');
+                if (href && href.startsWith('/')) {
+                    let followerHandle = href.slice(1); // Remove the leading '/' to get the handle
+                    followerHandlesSet.add(followerHandle); // Add the handle to the Set only if it's a follower
+                }
+            }
         }
     });
 }
