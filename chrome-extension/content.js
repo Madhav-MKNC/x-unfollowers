@@ -59,8 +59,6 @@ async function loadAndExtractFollowers() {
     return Array.from(followerHandles); // Convert the Set to an Array to return
 }
 
-
-
 async function analyzeAndStoreFollowers(followerHandles) {
     // This function now does the job of analyzing followers and storing the result
     chrome.storage.local.get(['previousFollowers'], function (result) {
@@ -95,13 +93,23 @@ async function analyzeAndStoreFollowers(followerHandles) {
     });
 }
 
-
 async function main() {
-    if (window.location.href !== "https://x.com/5mknc5/followers") {
-        alert("Goto https://x.com/5mknc5/followers");
-        console.log("Not on the specified URL, script will not run.");
+    // if (window.location.href !== "https://x.com/5mknc5/followers") {
+    //     alert("Goto https://x.com/5mknc5/followers");
+    //     console.log("Not on the specified URL, script will not run.");
+    //     return;
+    // }
+
+    const urlPattern = /^https:\/\/(x\.com|twitter\.com)\/([^\/]+)\/followers$/;
+    const match = window.location.href.match(urlPattern);
+
+    if (!match) {
+        console.log("Not on a valid followers page. Exiting script.");
         return;
     }
+
+    const x_handle = match[2]; // Extracted handle
+    console.log("Handle detected:", x_handle);
 
     // remove aside "who to follow"
     // Use querySelector to find the element with the specific aria-label
@@ -111,7 +119,6 @@ async function main() {
     if (element) {
         element.parentNode.removeChild(element);
     }
-
 
     window.scrollTo(0, 0);
     await sleep(1000);
