@@ -32,7 +32,8 @@
                 "https://x.com/*"
             ],
             "js": [
-                "content.js"
+                "content.js",
+                "fetch-bookmarks.js"
             ]
         }
     ]
