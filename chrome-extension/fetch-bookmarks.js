@@ -88,4 +88,4 @@ async function export_bookmarked_tweets() {
     await save_bookmarked_tweets(tweets);
 }
 
-export_bookmarked_tweets()
+// export_bookmarked_tweets()
